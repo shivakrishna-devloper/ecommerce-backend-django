@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'products',
     'orders',
     'django_filters',
+    'drf_yasg',
 ]
 
 MIDDLEWARE = [
@@ -119,6 +120,17 @@ REST_FRAMEWORK = {
     # Pagination settings
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 5,   # Show 5 products per page
+}
+
+SWAGGER_SETTINGS = {
+    'SECURITY_DEFINITIONS': {
+        'Bearer': {
+            'type': 'apiKey',
+            'in': 'header',
+            'name': 'Authorization',
+            
+        }
+    }
 }
 
 # Tell Django to user our custom user model

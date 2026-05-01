@@ -13,3 +13,6 @@ class OrderViewSet(viewsets.ModelViewSet):
     # Only authenticated users
     permission_classes = [IsAuthenticated]
 
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+

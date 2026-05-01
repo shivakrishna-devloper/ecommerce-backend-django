@@ -1,5 +1,7 @@
 from rest_framework import serializers
 from .models import Order, OrderItem
+from django.db import transaction
+from products.models import Product
 
 # Serializer for each item inside order
 class OrderItemSerializer(serializers.ModelSerializer):
@@ -15,28 +17,41 @@ class OrderSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Order
-        fields = ['id', 'user', 'items', 'total_price']
+        fields = ['id', 'items', 'total_price']
         read_only_fields = ['total_price']
 
     def create(self, validated_data):
 
         """
-        Custom create method to:
-        1. Create order
-        2. Add order items
-        3. Calculate total price
-        4. Reduce product stock
+        Atomic order creation:
+        - Locks product rows
+        - Validates stock
+        - Prevents race conditions
 
         """
         items_data = validated_data.pop('items')
+        user = self.context['request'].user
 
-        # Create order
-        order = Order.objects.create(**validated_data)
-        total = 0
+        with transaction.atomic():
+            order = Order.objects.create(user = user)
+            total = 0
+
 
         for item in items_data:
             product = item['product']
             quantity = item['quantity']
+
+            #Lock the product row
+            product = Product.objects.select_for_update().get(id = product.id)
+
+            # Prevent invalid quantity
+            if quantity <= 0:
+                raise serializers.ValidationError("Quantity must be greater than 0")
+
+            # Prevent overselling
+            if product.stock < quantity:
+                raise serializers.ValidationError(f"Not enough stock for {product.name}")
+
 
             # Calculate price for this item
             price = product.price * quantity
