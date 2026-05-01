@@ -183,7 +183,7 @@ http://127.0.0.1:8000/swagger/
 
 ## 👨‍💻 Author
 
-Shiva Krishna Koduri
-GitHub:(https://github.com/shivakrishna-devloper)
+**Shiva Krishna Koduri**
+**GitHub:**(https://github.com/shivakrishna-devloper)
 
 ---
