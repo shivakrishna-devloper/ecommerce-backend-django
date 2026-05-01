@@ -15,6 +15,8 @@ This project demonstrates REST API design, authentication, authorization, and co
 * 📉 Stock Management on Order Placement
 * 📄 Pagination Support
 * 🔍 Product Filtering
+* 🔒 Atomic order processing with transaction management
+* 🛑 Prevents overselling using row-level locking (select_for_update)
 
 ---
 
